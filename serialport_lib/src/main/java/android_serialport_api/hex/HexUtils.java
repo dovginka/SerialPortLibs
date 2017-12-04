@@ -1,10 +1,10 @@
-package android_serialport_api.utils;
+package android_serialport_api.hex;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * @author Created by Administrator on  2017/8/16
+ * @author Created by Administrator on  2017/11/30
  * @version 1.0.
  */
 
@@ -115,15 +115,24 @@ public class HexUtils {
         }
         return dest;
     }
-    /*-----------------------------------
 
-String s = "你要去除的字符串";
- 1.去除空格：s = s.replace('\\s','');
-2.去除回车：s = s.replace('\n','');
-这样也可以把空格和回车去掉，其他也可以照这样做。
-    注：\n 回车(\u000a)
-    \t 水平制表符(\u0009)
-    \s 空格(\u0008)
-    \r 换行(\u000d)*/
+    /**
+     * @param b 有符号的byte
+     * @return unsigned  无符号值
+     * byte b= -120;
+     * int a= bytes & 0xff;
+     */
+    public static int signed2unsigned(byte b) {
+        return b & 0xff;
+    }
 
+    /**
+     * @param b 无符号的int
+     * @return signed  有符号的byte
+     * int a = 300;
+     * byte c = (byte) a;
+     */
+    public static byte unsigned2signed(int b) {
+        return (byte) b;
+    }
 }
