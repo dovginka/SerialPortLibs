@@ -1,5 +1,8 @@
 package android_serialport_api.hex;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -135,4 +138,39 @@ public class HexUtils {
     public static byte unsigned2signed(int b) {
         return (byte) b;
     }
+
+    /**
+     * List<Byte>转换为byte 数组
+     *
+     * @param list Byte集合
+     * @return byte[]
+     */
+    public static byte[] listTobyte(List<Byte> list) {
+        if (list == null || list.size() < 0)
+            return null;
+        byte[] bytes = new byte[list.size()];
+        int i = 0;
+        for (Byte aList : list) {
+            bytes[i] = aList;
+            i++;
+        }
+        return bytes;
+    }
+
+    /**
+     * List<Byte>转换为byte 数组
+     *
+     * @param data byte[]
+     * @return List<Byte>
+     */
+    public static List<Byte> byteToList(byte[] data) {
+        if (data == null)
+            return null;
+        List<Byte> bytes = new ArrayList<>();
+        for (Byte aList : data) {
+            bytes.add(aList);
+        }
+        return bytes;
+    }
+
 }
