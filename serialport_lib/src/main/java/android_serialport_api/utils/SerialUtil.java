@@ -1,11 +1,15 @@
 package android_serialport_api.utils;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 
 import android_serialport_api.SerialPort;
 
@@ -65,6 +69,30 @@ public enum SerialUtil {
             return buffer;
         } else
             return null;
+    }
+
+    private List<Byte> data;
+
+    public byte[] getDataByte2() throws Exception {
+        if (inputStream == null) throw new NullPointerException(" inputStream is null");
+        buffer = new byte[512];
+        data = new ArrayList<>();
+        int len = -1;
+        while ((len = inputStream.read(buffer)) > 0) {
+            for (int i = 0; i < len; i++) {
+                data.add(buffer[i]);
+            }
+        }
+        if (data.size() == 0) {
+            return null;
+        } else {
+            buffer = new byte[data.size()];
+            for (int i = 0; i < data.size(); i++) {
+                buffer[i] = data.get(i);
+            }
+            data.clear();
+            return buffer;
+        }
     }
 
     /**

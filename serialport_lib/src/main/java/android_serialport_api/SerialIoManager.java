@@ -88,7 +88,7 @@ public class SerialIoManager extends Thread {
             if (DEBUG) Log.d(TAG, "Read data len=" + len);
             if (mListener != null)
                 mListener.responseData(dataByte);
-        }
+        } else Thread.sleep(200);
         //写数据
         // Handle outgoing data.
         byte[] outBuff = null;
