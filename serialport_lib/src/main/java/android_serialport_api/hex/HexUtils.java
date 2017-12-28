@@ -173,4 +173,91 @@ public class HexUtils {
         return bytes;
     }
 
+
+    /**
+     * 将byte转换为一个长度为8的byte数组，数组每个值代表bit
+     *
+     * @param b 8位的byte数
+     * @return 2进制byte的数组
+     */
+    public static byte[] getBooleanArray(byte b) {
+        byte[] array = new byte[8];
+        for (int i = 7; i >= 0; i--) {
+            array[i] = (byte) (b & 1);
+            b = (byte) (b >> 1);
+        }
+        return array;
+    }
+
+
+    private static int toByte(char c) {
+        if (c >= '0' && c <= '9')
+            return (c - '0');
+        if (c >= 'A' && c <= 'F')
+            return (c - 'A' + 10);
+        if (c >= 'a' && c <= 'f')
+            return (c - 'a' + 10);
+
+        throw new RuntimeException("Invalid hex char '" + c + "'");
+    }
+
+    /**
+     * 把byte转为字符串的bit
+     *
+     * @param b 8位的byte
+     * @return 二进制字符串bit
+     */
+    public static String byteToBit(byte b) {
+        return ""
+                + (byte) ((b >> 7) & 0x1) + (byte) ((b >> 6) & 0x1)
+                + (byte) ((b >> 5) & 0x1) + (byte) ((b >> 4) & 0x1)
+                + (byte) ((b >> 3) & 0x1) + (byte) ((b >> 2) & 0x1)
+                + (byte) ((b >> 1) & 0x1) + (byte) ((b >> 0) & 0x1);
+    }
+
+
+    /**
+     * 2个8位的byte数据转化为1个16位的short数据
+     *
+     * @param b1 数据1
+     * @param b2 数据2
+     * @return 16为的short整形数据
+     * <pre>
+     *      例如：
+     *      short s = 0          // 一个16位整形变量，初值为 0000 0000 0000 0000
+     *      byte b1 = 0x01;      //一个byte的变量，作为转换后的高8位，假设初值为 0000 0001
+     *      byte b2 = 0x02;      //一个byte的变量，作为转换后的低8位，假设初值为 0000 0010
+     *
+     *      doubleByteToShort()后为0000 0001 0000 0010
+     * </pre>
+     */
+    public static short doubleByteToShort(byte b1, byte b2) {
+        short s = 0;            //一个16位整形变量，初值为 0000 0000 0000 0000
+        s = (short) (s ^ b1);   //将b1赋给s的低8位
+        s = (short) (s << 8);   //s的低8位移动到高8位
+        s = (short) (s ^ b2);   //在b2赋给s的低8位l
+        return s;
+    }
+
+
+    /**
+     * 16位的short数字--->2个空间大小的8位byte数组
+     *
+     * @param i 16位的short数字
+     * @return 2个空间大小的8位byte数组
+     */
+    public static byte[] toByteArray(short i) {
+        return new byte[]{(byte) (i >> 8 & 0xff), (byte) (i & 0xff)};
+    }
+
+    /**
+     * 32位的int数字--->4个空间大小的8位byte数组
+     *
+     * @param i 32位的short数字
+     * @return 4个空间大小的8位byte数组
+     */
+    public static byte[] toByteArray(int i) {
+        return new byte[]{(byte) (i >> 24 & 255), (byte) (i >> 16 & 255), (byte) (i >> 8 & 255), (byte) (i & 255)};
+    }
+
 }
