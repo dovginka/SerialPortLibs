@@ -4,6 +4,7 @@ import android.util.Log;
 
 import java.nio.ByteBuffer;
 
+import android_serialport_api.utils.SerialInterface;
 import android_serialport_api.utils.SerialUtil;
 
 /**
@@ -18,10 +19,10 @@ public class SerialIoManager extends Thread {
     private final ByteBuffer mWriteBuffer = ByteBuffer.allocate(BUFSIZ);
     private ResponseDataCallback mListener;
     private State mState = State.STOPPED;
-    private final SerialUtil mSerialUtil;
+    private final SerialInterface mSerialUtil;
     private boolean DEBUG = true;
 
-    public SerialIoManager(SerialUtil serial) {
+    public SerialIoManager(SerialInterface serial) {
         mSerialUtil = serial;
     }
 
@@ -105,7 +106,7 @@ public class SerialIoManager extends Thread {
             // 写数据
             if (DEBUG) Log.d(TAG, "Write data len=" + len);
             mSerialUtil.setData(outBuff, 0, outBuff.length);
-            mListener.sendData(outBuff);
+            if (mListener != null) mListener.sendData(outBuff);
         }
     }
 
