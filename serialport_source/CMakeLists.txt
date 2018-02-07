@@ -9,6 +9,12 @@ cmake_minimum_required(VERSION 3.4.1)
 # define multiple libraries by adding multiple add.library() commands,
 # and CMake builds them for you. When you build your app, Gradle
 # automatically packages shared libraries with your APK.
+# set(CMAKE_LIBRARY_OUTPUT_DIRECTORY PROJECTSOURCEDIR/../serialport_source/jniLibs/{ANDROID_ABI})
+# set(distribution_DIR ${CMAKE_SOURCE_DIR}/../serialport_source/libs/${ANDROID_ABI})
+# set(distribution_DIR ${CMAKE_SOURCE_DIR}/libs/${ANDROID_ABI})
+
+
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/../serialport_source/libs/${ANDROID_ABI})
 
 add_library( # Specifies the name of the library.
              serial_port
@@ -18,7 +24,7 @@ add_library( # Specifies the name of the library.
 
              # Provides a relative path to your source file(s).
              src/main/cpp/SerialPort.c )
-             
+include_directories(src/main/cpp/include/)
 find_library( # Sets the name of the path variable.
               log-lib
 

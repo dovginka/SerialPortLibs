@@ -23,6 +23,14 @@ JNIEXPORT jobject JNICALL Java_android_serialport_SerialPort_open
 JNIEXPORT void JNICALL Java_android_serialport_SerialPort_close
   (JNIEnv *, jobject);
 
+/*
+ * Class:     android_serialport_SerialPort
+ * Method:    tcflush
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_android_serialport_SerialPort_tcflush
+  (JNIEnv *, jobject);
+
 #ifdef __cplusplus
 }
 #endif

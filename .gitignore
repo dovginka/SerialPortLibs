@@ -54,3 +54,6 @@ google-services.json
 freeline.py
 freeline/
 freeline_project_description.json
+/serialport_lib/
+serialport_lib/src/main/res/drawable/
+serialport_source/libs/

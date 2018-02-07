@@ -14,13 +14,14 @@ android {
         externalNativeBuild {
             cmake {
                 cppFlags ""
+                abiFilters "armeabi", "armeabi-v7a", "x86"
             }
         }
-        ndk {
+        /*ndk {
             moduleName "NativeExample"
             ldLibs "log", "z", "m"
             abiFilters "armeabi", "armeabi-v7a", "x86"
-        }
+        }*/
     }
     buildTypes {
         release {
@@ -33,6 +34,27 @@ android {
             path 'CMakeLists.txt'
         }
     }
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
+
+    repositories {
+        flatDir {
+            dirs 'libs'
+        }
+    }
+
+    task makeJar(type: Copy) {
+        delete 'libs/serialport.jar'
+        from('build/intermediates/bundles/debug/')
+        into('libs/')
+        include('classes.jar')
+        rename('classes.jar', 'serialport.jar')
+    }
+
+    makeJar.dependsOn(build)
 
 }
 
