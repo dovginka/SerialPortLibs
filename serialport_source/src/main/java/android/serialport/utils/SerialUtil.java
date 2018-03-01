@@ -89,7 +89,6 @@ public enum SerialUtil implements SerialInterface {
 
     @Override
     public void closeIo(Closeable closeable) {
-
         if (closeable == null) return;
         try {
             closeable.close();

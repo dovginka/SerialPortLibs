@@ -78,12 +78,18 @@ public class SerialPort {
         mAccessFile = new RandomAccessFile(file.getAbsolutePath(), "rw");
         mChannel = mAccessFile.getChannel();
         int i = 5;
-        do {
-            i--;
-            mLock = mChannel.tryLock();
-        } while (mLock == null && i > 0);
+        try {
+            do {
+                i--;
+                mLock = mChannel.tryLock();
+            } while (mLock == null && i > 0);
+        } catch (Exception e) {
+            release();
+            throw new LockException("file lock is null", e);
+        }
         if (mLock == null) {
-            throw new IOException("file lock is null");
+            release();
+            throw new LockException("file lock is null");
         }
     }
 
