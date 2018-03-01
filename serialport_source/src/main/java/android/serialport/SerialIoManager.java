@@ -28,6 +28,14 @@ public class SerialIoManager extends Thread {
     public void syncWrite(byte[] data) {
         if (data == null) return;
         synchronized (mWriteBuffer) {
+            while (mWriteBuffer.capacity() - mWriteBuffer.position() < data.length) {
+                //fix: 2018-02-28 解决数据越界问题
+                try {
+                    mWriteBuffer.wait(100);
+                } catch (InterruptedException e) {
+                    //e.printStackTrace();
+                }
+            }
             mWriteBuffer.put(data);
         }
     }

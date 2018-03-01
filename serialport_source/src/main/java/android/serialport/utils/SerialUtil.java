@@ -79,6 +79,7 @@ public enum SerialUtil implements SerialInterface {
     @Override
     public void closeSerialPort() {
         if (serialPort != null) {
+            serialPort.release();
             serialPort.close();
             serialPort = null;
         }
@@ -88,6 +89,7 @@ public enum SerialUtil implements SerialInterface {
 
     @Override
     public void closeIo(Closeable closeable) {
+
         if (closeable == null) return;
         try {
             closeable.close();

@@ -25,6 +25,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.RandomAccessFile;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
 
 public class SerialPort {
 
@@ -36,8 +39,12 @@ public class SerialPort {
     private FileDescriptor mFd;
     private FileInputStream mFileInputStream;
     private FileOutputStream mFileOutputStream;
+    //添加文件锁，如果文件锁不能获取，则说明此文件被其它文件占用，则需释放锁，然后重新开启（例如进程间广播释放文件锁）
+    private RandomAccessFile mAccessFile;
+    private FileChannel mChannel;
+    private FileLock mLock;
 
-    public SerialPort(File device, int baudrate, int flags) throws SecurityException, IOException {
+    public SerialPort(File device, int baudrate, int flags) throws Exception {
         /* Check access permission */
         if (!device.canRead() || !device.canWrite()) {
             try {
@@ -53,6 +60,9 @@ public class SerialPort {
                 throw new SecurityException();
             }
         }
+        //获取文件锁
+        lock(device);
+        //开启
         mFd = open(device.getAbsolutePath(), baudrate, flags);
         if (mFd == null) {
             Log.e(TAG, "native open returns null");
@@ -61,6 +71,42 @@ public class SerialPort {
         mFileInputStream = new FileInputStream(mFd);
         mFileOutputStream = new FileOutputStream(mFd);
     }
+
+    public void lock(File file) throws Exception {
+        release();
+        //获取文件锁
+        mAccessFile = new RandomAccessFile(file.getAbsolutePath(), "rw");
+        mChannel = mAccessFile.getChannel();
+        int i = 5;
+        do {
+            i--;
+            mLock = mChannel.tryLock();
+        } while (mLock == null && i > 0);
+        if (mLock == null) {
+            throw new IOException("file lock is null");
+        }
+    }
+
+    public void release() {
+        //获取文件锁
+        try {
+            if (mLock != null) {
+                mLock.release();
+                mLock = null;
+            }
+            if (mChannel != null) {
+                mChannel.close();
+                mChannel = null;
+            }
+            if (mAccessFile != null) {
+                mAccessFile.close();
+                mAccessFile = null;
+            }
+        } catch (Exception e) {
+            //
+        }
+    }
+
 
     // Getters and setters
     public InputStream getInputStream() {

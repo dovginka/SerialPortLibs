@@ -84,6 +84,7 @@ public class SerialUtilOld implements SerialInterface {
     public void closeIo(Closeable closeable) {
         if (closeable == null) return;
         try {
+            serialPort.release();
             closeable.close();
             closeable = null;
         } catch (IOException e) {//
