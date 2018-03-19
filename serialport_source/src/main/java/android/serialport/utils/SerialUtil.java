@@ -45,7 +45,12 @@ public enum SerialUtil implements SerialInterface {
 
     @Override
     public byte[] getDataByte() throws Exception {
-        if (inputStream == null) throw new NullPointerException(" inputStream is null");
+        /*if (inputStream == null) throw new NullPointerException(" inputStream is null");
+        byte[] srcPos = new byte[126];
+        int len = inputStream.read(srcPos);
+        byte[] destPos = new byte[len];
+        System.arraycopy(srcPos, 0, destPos, 0, destPos.length);
+        return destPos;*/
         int size = inputStream.available();
         if (size > 0) {
             byte[] buffer = new byte[size];

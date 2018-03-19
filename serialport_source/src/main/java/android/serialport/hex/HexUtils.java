@@ -259,4 +259,23 @@ public class HexUtils {
         return new byte[]{(byte) (i >> 24 & 255), (byte) (i >> 16 & 255), (byte) (i >> 8 & 255), (byte) (i & 255)};
     }
 
+    public static byte getHighByte(int data) {
+        return (byte) (data >> 8);
+    }
+
+    // 取低字节
+    public static byte getLowByte(int data) {
+        return (byte) (data & 0xff);
+    }
+
+
+    /**
+     * @param highBit 高八位
+     * @param lowBit  低八位
+     * @return 一个16位的Int数
+     */
+    public static int makeInt(byte highBit, byte lowBit) {
+        return (((highBit & 0xff) << 8)) | (lowBit & 0xff);
+    }
+
 }

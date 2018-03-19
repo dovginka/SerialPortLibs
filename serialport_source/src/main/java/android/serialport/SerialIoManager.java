@@ -13,15 +13,18 @@ import java.nio.ByteBuffer;
 
 public class SerialIoManager extends Thread {
 
-    private static final int BUFSIZ = 4096;
+    private static final String TAG = "SerialIoManager";
+    private static final int BUF_SIZE = 1024 * 4;
     // Synchronized by 'mWriteBuffer'
-    private final ByteBuffer mWriteBuffer = ByteBuffer.allocate(BUFSIZ);
+    private final ByteBuffer mWriteBuffer = ByteBuffer.allocate(BUF_SIZE);
     private ResponseDataCallback mListener;
     private State mState = State.STOPPED;
     private final SerialInterface mSerialUtil;
+
     private boolean DEBUG = true;
 
     public SerialIoManager(SerialInterface serial) {
+        super(TAG);
         mSerialUtil = serial;
     }
 
@@ -30,6 +33,7 @@ public class SerialIoManager extends Thread {
         synchronized (mWriteBuffer) {
             while (mWriteBuffer.capacity() - mWriteBuffer.position() < data.length) {
                 //fix: 2018-02-28 解决数据越界问题
+                Log.d(TAG, "syncWrite: wait...");
                 try {
                     mWriteBuffer.wait(100);
                 } catch (InterruptedException e) {
@@ -54,8 +58,6 @@ public class SerialIoManager extends Thread {
     private synchronized State getStated() {
         return mState;
     }
-
-    private static final String TAG = "SerialIoManager";
 
     @Override
     public void run() {
@@ -94,11 +96,10 @@ public class SerialIoManager extends Thread {
         byte[] dataByte = mSerialUtil.getDataByte();
         if (dataByte != null && (len = dataByte.length) > 0) {
             if (DEBUG) Log.d(TAG, "Read data len=" + len);
-            if (mListener != null)
-                mListener.responseData(dataByte);
-        } else Thread.sleep(200);
+            if (mListener != null) mListener.responseData(dataByte);
+        }
         //写数据
-        // Handle outgoing data.
+        //Handle outgoing data.
         byte[] outBuff = null;
         synchronized (mWriteBuffer) {
             len = mWriteBuffer.position();
@@ -114,6 +115,8 @@ public class SerialIoManager extends Thread {
             if (DEBUG) Log.d(TAG, "Write data len=" + len);
             mSerialUtil.setData(outBuff, 0, outBuff.length);
             if (mListener != null) mListener.sendData(outBuff);
+        } else {
+            Thread.sleep(100);
         }
     }
 
