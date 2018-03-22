@@ -44,8 +44,8 @@ public class SerialIoManager extends Thread {
                     //e.printStackTrace();
                 }
             }
+            mWriteBuffer.put(data);
         }
-        mWriteBuffer.put(data);
     }
 
     public synchronized void setListener(ResponseDataCallback listener) {
