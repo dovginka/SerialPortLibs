@@ -20,11 +20,15 @@ public class SerialIoManager extends Thread {
     private ResponseDataCallback mListener;
     private State mState = State.STOPPED;
     private final SerialInterface mSerialUtil;
-
-    private boolean DEBUG = true;
+    private boolean DEBUG;
 
     public SerialIoManager(SerialInterface serial) {
+        this(serial, true);
+    }
+
+    public SerialIoManager(SerialInterface serial, boolean isDebug) {
         super(TAG);
+        DEBUG = isDebug;
         mSerialUtil = serial;
     }
 
@@ -33,15 +37,15 @@ public class SerialIoManager extends Thread {
         synchronized (mWriteBuffer) {
             while (mWriteBuffer.capacity() - mWriteBuffer.position() < data.length) {
                 //fix: 2018-02-28 解决数据越界问题
-                Log.d(TAG, "syncWrite: wait...");
+                if (DEBUG) Log.d(TAG, "syncWrite: wait...");
                 try {
-                    mWriteBuffer.wait(100);
+                    mWriteBuffer.wait(1000);
                 } catch (InterruptedException e) {
                     //e.printStackTrace();
                 }
             }
-            mWriteBuffer.put(data);
         }
+        mWriteBuffer.put(data);
     }
 
     public synchronized void setListener(ResponseDataCallback listener) {
