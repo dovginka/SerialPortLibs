@@ -14,7 +14,7 @@
  * limitations under the License. 
  */
 
-package android.serialport;
+package com.nativec.tools;
 
 import android.util.Log;
 
