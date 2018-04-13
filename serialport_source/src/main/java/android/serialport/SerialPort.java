@@ -32,6 +32,7 @@ import java.nio.channels.FileLock;
 public class SerialPort {
 
     private static final String TAG = "SerialPort";
+    private static final String vName = "1.0.2";
 
     /*
      * Do not remove or rename the field mFd: it is used by native method close();
@@ -131,6 +132,7 @@ public class SerialPort {
     public native void tcflush();
 
     static {
+        Log.d(TAG, "static initializer: " + vName);
         System.loadLibrary("serial_port");
     }
 }
