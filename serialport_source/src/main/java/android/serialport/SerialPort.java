@@ -31,19 +31,19 @@ import java.nio.channels.FileLock;
 
 public class SerialPort {
 
-    private static final String TAG = "SerialPort";
+    private static final String TAG   = "SerialPort";
     private static final String vName = "1.0.2";
 
     /*
      * Do not remove or rename the field mFd: it is used by native method close();
      */
-    private FileDescriptor mFd;
-    private FileInputStream mFileInputStream;
+    private FileDescriptor   mFd;
+    private FileInputStream  mFileInputStream;
     private FileOutputStream mFileOutputStream;
     //添加文件锁，如果文件锁不能获取，则说明此文件被其它文件占用，则需释放锁，然后重新开启（例如进程间广播释放文件锁）
     private RandomAccessFile mAccessFile;
-    private FileChannel mChannel;
-    private FileLock mLock;
+    private FileChannel      mChannel;
+    private FileLock         mLock;
 
     public SerialPort(File device, int baudrate, int flags) throws Exception {
         /* Check access permission */
@@ -67,7 +67,7 @@ public class SerialPort {
         mFd = open(device.getAbsolutePath(), baudrate, flags);
         if (mFd == null) {
             Log.e(TAG, "native open returns null");
-            throw new IOException();
+            throw new IOException("native open returns null");
         }
         mFileInputStream = new FileInputStream(mFd);
         mFileOutputStream = new FileOutputStream(mFd);

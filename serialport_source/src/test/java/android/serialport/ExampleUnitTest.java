@@ -12,15 +12,5 @@ import java.io.FileInputStream;
 public class ExampleUnitTest {
     @Test
     public void addition_isCorrect() throws Exception {
-      //  assertEquals(4, 2 + 2);
-        FileInputStream inputStream = new FileInputStream("C://log.txt");
-        int a = inputStream.available();
-        byte[] srcPos = new byte[1024];
-        int len = inputStream.read(srcPos);
-        byte[] destPos = new byte[len];
-        System.arraycopy(srcPos, 0, destPos, 0, destPos.length);
-
-        System.out.println("tess");
-
     }
 }
