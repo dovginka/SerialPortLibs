@@ -55,10 +55,10 @@ public class SerialPort {
                         + "exit\n";
                 su.getOutputStream().write(cmd.getBytes());
                 if ((su.waitFor() != 0) || !device.canRead() || !device.canWrite()) {
-                    throw new SecurityException();
+                    throw new SecurityException("授权失败1");
                 }
             } catch (Exception e) {
-                throw new SecurityException();
+                throw new SecurityException("授权失败2");
             }
         }
         //获取文件锁
