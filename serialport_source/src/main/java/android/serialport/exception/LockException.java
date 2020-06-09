@@ -1,4 +1,4 @@
-package android.serialport;
+package android.serialport.exception;
 
 import java.io.IOException;
 

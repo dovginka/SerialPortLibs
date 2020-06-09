@@ -1,2 +1,3 @@
 //include ':serialport_lib'
 include ':serialport_source'
+include ':hexlibs'

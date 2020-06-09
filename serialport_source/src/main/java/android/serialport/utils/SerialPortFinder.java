@@ -14,7 +14,7 @@
  * limitations under the License. 
  */
 
-package android.serialport;
+package android.serialport.utils;
 
 import android.util.Log;
 

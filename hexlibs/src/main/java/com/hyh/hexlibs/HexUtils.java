@@ -1,4 +1,4 @@
-package android.serialport.hex;
+package com.hyh.hexlibs;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +9,6 @@ import java.util.regex.Pattern;
  * @author Created by Administrator on  2017/11/30
  * @version 1.0.
  */
-
 public class HexUtils {
 
     public static String bytes2HexString(byte[] b) {
@@ -106,6 +105,11 @@ public class HexUtils {
             }
         }
         return hexString;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(intToHexString(10000000,2));
+        System.out.println(bytes2HexString(toByteArray(10000000)));
     }
 
     private static String replaceBlank(String str) {

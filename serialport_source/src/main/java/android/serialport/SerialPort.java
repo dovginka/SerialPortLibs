@@ -1,21 +1,22 @@
 /*
  * Copyright 2009 Cedric Priscal
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License. 
+ * limitations under the License.
  */
 
 package android.serialport;
 
+import android.serialport.exception.LockException;
 import android.util.Log;
 
 import java.io.File;
@@ -29,23 +30,27 @@ import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 
-public class SerialPort {
+final class SerialPort {
 
-    private static final String TAG   = "SerialPort";
+    private static final String TAG = "SerialPort";
     private static final String vName = "1.0.2";
 
     /*
      * Do not remove or rename the field mFd: it is used by native method close();
      */
-    private FileDescriptor   mFd;
-    private FileInputStream  mFileInputStream;
+    private FileDescriptor mFd;
+    private FileInputStream mFileInputStream;
     private FileOutputStream mFileOutputStream;
     //添加文件锁，如果文件锁不能获取，则说明此文件被其它文件占用，则需释放锁，然后重新开启（例如进程间广播释放文件锁）
     private RandomAccessFile mAccessFile;
-    private FileChannel      mChannel;
-    private FileLock         mLock;
+    private FileChannel mChannel;
+    private FileLock mLock;
 
-    public SerialPort(File device, int baudrate, int flags) throws Exception {
+    private SerialPort() {
+
+    }
+
+    protected SerialPort(File device, int baudrate, int flags) throws Exception {
         /* Check access permission */
         if (!device.canRead() || !device.canWrite()) {
             try {
@@ -73,7 +78,7 @@ public class SerialPort {
         mFileOutputStream = new FileOutputStream(mFd);
     }
 
-    public void lock(File file) throws Exception {
+    private void lock(File file) throws Exception {
         release();
         //获取文件锁
         mAccessFile = new RandomAccessFile(file.getAbsolutePath(), "rw");

@@ -1,5 +1,6 @@
-package android.serialport.hex;
+package com.hyh.hexlibs;
 
+@Deprecated
 public class HexData {
     private static final String HEXES = "0123456789ABCDEF";
     private static final String HEX_INDICATOR = "0x";

@@ -1,4 +1,4 @@
-package android.serialport.hex;
+package com.hyh.hexlibs;
 
 import org.junit.Test;
 

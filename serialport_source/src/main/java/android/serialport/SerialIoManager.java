@@ -1,6 +1,5 @@
 package android.serialport;
 
-import android.serialport.utils.SerialInterface;
 import android.util.Log;
 
 import java.nio.ByteBuffer;
@@ -16,6 +15,7 @@ public class SerialIoManager extends Thread {
     private static final String TAG = "SerialIoManager";
     private static final int BUF_SIZE = 1024 * 4;
     // Synchronized by 'mWriteBuffer'
+    private final byte[] mReadBuffer = new byte[512];
     private final ByteBuffer mWriteBuffer = ByteBuffer.allocate(BUF_SIZE);
     private ResponseDataCallback mListener;
     private State mState = State.STOPPED;
@@ -96,11 +96,10 @@ public class SerialIoManager extends Thread {
     private void nextStep() throws Exception {
         //读数据
         //数据解析
-        int len = 0;
-        byte[] dataByte = mSerialUtil.getDataByte();
-        if (dataByte != null && (len = dataByte.length) > 0) {
+        int len = mSerialUtil.read(mReadBuffer);
+        if (len > 0) {
             if (DEBUG) Log.d(TAG, "Read data len=" + len);
-            if (mListener != null) mListener.responseData(dataByte);
+            if (mListener != null) mListener.responseData(mReadBuffer, len);
         }
         //写数据
         //Handle outgoing data.
@@ -117,7 +116,7 @@ public class SerialIoManager extends Thread {
         if (outBuff != null) {
             // 写数据
             if (DEBUG) Log.d(TAG, "Write data len=" + len);
-            mSerialUtil.setData(outBuff, 0, outBuff.length);
+            mSerialUtil.write(outBuff, 0, outBuff.length);
             if (mListener != null) mListener.sendData(outBuff);
         } else {
             Thread.sleep(100);
@@ -129,7 +128,7 @@ public class SerialIoManager extends Thread {
     }
 
     public interface ResponseDataCallback {
-        void responseData(byte[] data);
+        void responseData(byte[] data, int len);
 
         void sendData(byte[] data);
 
