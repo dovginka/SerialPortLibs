@@ -2,6 +2,7 @@ package android.serialport;
 
 import android.util.Log;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 
 
@@ -18,12 +19,23 @@ public class SerialIoManager extends Thread {
     private final byte[] mReadBuffer = new byte[512];
     private final ByteBuffer mWriteBuffer = ByteBuffer.allocate(BUF_SIZE);
     private ResponseDataCallback mListener;
-    private State mState = State.STOPPED;
+    private IState mState = IState.STOPPED;
     private final SerialInterface mSerialUtil;
     private boolean DEBUG;
 
+    private int sleepTimeEmpty = 1;
+
+    /**
+     * 读到数据为null时，减小cpu压力，默认休眠1毫秒
+     *
+     * @param sleepTimeEmpty 休眠时间（毫秒）
+     */
+    public void setSleepTimeEmpty(int sleepTimeEmpty) {
+        this.sleepTimeEmpty = sleepTimeEmpty;
+    }
+
     public SerialIoManager(SerialInterface serial) {
-        this(serial, true);
+        this(serial, false);
     }
 
     public SerialIoManager(SerialInterface serial, boolean isDebug) {
@@ -32,6 +44,11 @@ public class SerialIoManager extends Thread {
         mSerialUtil = serial;
     }
 
+    /**
+     * 异步写入数据
+     *
+     * @param data 数据
+     */
     public void syncWrite(byte[] data) {
         if (data == null) return;
         synchronized (mWriteBuffer) {
@@ -39,7 +56,7 @@ public class SerialIoManager extends Thread {
                 //fix: 2018-02-28 解决数据越界问题
                 if (DEBUG) Log.d(TAG, "syncWrite: wait...");
                 try {
-                    mWriteBuffer.wait(1000);
+                    mWriteBuffer.wait(100);
                 } catch (InterruptedException e) {
                     //e.printStackTrace();
                 }
@@ -48,33 +65,51 @@ public class SerialIoManager extends Thread {
         }
     }
 
-    public synchronized void setListener(ResponseDataCallback listener) {
-        mListener = listener;
-    }
-
-    public synchronized void stopMe() {
-        if (getStated() == State.RUNNING) {
-            Log.i(TAG, "Stop requested");
-            mState = State.STOPPING;
+    /**
+     * 同步写入数据
+     *
+     * @param data 数据
+     */
+    public synchronized void write(byte[] data) {
+        try {
+            mSerialUtil.write(data);
+            mListener.sendData(data);
+        } catch (IOException e) {
+            mListener.onRunError(e);
         }
     }
 
-    private synchronized State getStated() {
+    public void setListener(ResponseDataCallback listener) {
+        mListener = listener;
+    }
+
+    public void stopMe() {
+        if (mState == IState.STOPPED) {
+            Log.i(TAG, "Already Stopped");
+            return;
+        }
+        if (mState == IState.RUNNING) {
+            Log.i(TAG, "Stop requested");
+            mState = IState.STOPPING;
+        }
+    }
+
+    public IState getStated() {
         return mState;
     }
 
     @Override
     public void run() {
         synchronized (this) {
-            if (getStated() != State.STOPPED) {
+            if (getStated() != IState.STOPPED) {
                 throw new IllegalStateException("Already running.");
             }
-            mState = State.RUNNING;
+            mState = IState.RUNNING;
         }
         Log.i(TAG, "Running ..");
         try {
             while (true) {
-                if (getStated() != State.RUNNING) {
+                if (getStated() != IState.RUNNING) {
                     Log.i(TAG, "Stopping mState=" + getState());
                     break;
                 }
@@ -87,7 +122,7 @@ public class SerialIoManager extends Thread {
             }
         } finally {
             synchronized (this) {
-                mState = State.STOPPED;
+                mState = IState.STOPPED;
                 Log.i(TAG, "Stopped.");
             }
         }
@@ -119,11 +154,11 @@ public class SerialIoManager extends Thread {
             mSerialUtil.write(outBuff, 0, outBuff.length);
             if (mListener != null) mListener.sendData(outBuff);
         } else {
-            Thread.sleep(100);
+            Thread.sleep(sleepTimeEmpty);
         }
     }
 
-    private enum State {
+    public enum IState {
         STOPPED, RUNNING, STOPPING
     }
 

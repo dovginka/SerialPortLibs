@@ -1,12 +1,12 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 28
-    buildToolsVersion "28.0.3"
+    compileSdkVersion 29
+    buildToolsVersion "29.0.3"
 
     defaultConfig {
         minSdkVersion 15
-        targetSdkVersion 28
+        targetSdkVersion 29
         versionCode 1
         versionName "1.0"
 
@@ -55,9 +55,9 @@ android {
     def zipFile = file('build/intermediates/packaged-classes/release/classes.jar') //待打包文件位置
 
     task makeJar(type: Copy) {
-        delete '../libs/serialport.jar'
+        delete 'libs/serialport.jar'
         from(zipFile)
-        into('../libs/')
+        into('libs/')
         include('classes.jar')
         rename('classes.jar', 'serialport.jar')
     }
@@ -71,6 +71,5 @@ dependencies {
     androidTestApi('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    api 'com.android.support:appcompat-v7:28.0.0'
     testApi 'junit:junit:4.12'
 }

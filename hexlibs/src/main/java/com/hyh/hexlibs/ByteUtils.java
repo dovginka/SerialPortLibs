@@ -5,6 +5,8 @@ import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ByteUtils {
 
@@ -69,6 +71,11 @@ public class ByteUtils {
         return (b1 & 0xFF) | ((b2 & 0xFF) << 8) | ((b3 & 0xFF) << 8 * 2) | ((b4 & 0xFF) << 8 * 3);
     }
 
+    public static long bytesToLong(byte b1, byte b2, byte b3, byte b4, byte b5, byte b6, byte b7, byte b8) {
+        return (b1 & 0xFF) | ((b2 & 0xFF) << 8) | ((b3 & 0xFF) << 8 * 2) | ((b4 & 0xFF) << 8 * 3)
+                | ((b5 & (long) 0xFF) << 8 * 4) | ((b6 & (long) 0xFF) << 8 * 4) | ((b7 & (long) 0xFF) << 8 * 4) | ((b8 & (long) 0xFF) << 8 * 4);
+    }
+
     public static byte[] longToBytes(long l) {
         byte[] result = new byte[4];
         result[0] = (byte) (l & 0xFF);
@@ -78,15 +85,12 @@ public class ByteUtils {
         return result;
     }
 
-    @Deprecated
     public static int bytesToInt(byte b1, byte b2) {
         return (b1 & 0xFF) | ((b2 & 0xFF) << 8);
     }
 
-    @Deprecated
     public static int bytesToInt(byte b1, byte b2, byte b3, byte b4) {
-//        return (b1 & 0xFF) | ((b2 & 0xFF) << 8);
-        return (((b3 & 0xff) << 24)) | (((b3 & 0xff) << 16)) | (((b3 & 0xff) << 8)) | (b4 & 0xff);
+        return (b1 & 0xFF) | ((b2 & 0xFF) << 8) | ((b3 & 0xFF) << 16) | ((b4 & 0xFF) << 24);
     }
 
     /**
@@ -296,6 +300,22 @@ public class ByteUtils {
         if (id.length() == 2) return "00" + id;
         if (id.length() == 3) return "0" + id;
         else return id;
+    }
+
+    public static byte[] toArray(List<Byte> data) {
+        byte[] bytes = new byte[data.size()];
+        for (int i = 0; i < data.size(); i++) {
+            bytes[i] = data.get(i);
+        }
+        return bytes;
+    }
+
+    public static List<Byte> toList(byte[] data) {
+        ArrayList<Byte> bytes = new ArrayList<>(data.length);
+        for (byte datum : data) {
+            bytes.add(datum);
+        }
+        return bytes;
     }
 
 }

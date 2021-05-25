@@ -16,4 +16,11 @@ public class HexUtilsTest {
         //257
     }
 
+    @Test
+    public void byteTolong() {
+        String s = "0000000005DC";
+        byte[] bytes = ByteUtils.hexStringToBytes(s);
+        System.out.println(ByteUtils.bytesToLong(bytes[5], bytes[4], bytes[3], bytes[2], bytes[1], bytes[0], (byte) 0, (byte) 0));
+    }
+
 }
